@@ -1,0 +1,176 @@
+#library import
+
+#Import dataframe
+import pandas as pd
+import researchpy as rp
+import statsmodels.api as sm
+from scipy.stats import pearsonr
+import scipy.stats as stats
+#import matplot for plotting grahs
+import matplotlib.pyplot as plt
+import numpy as np
+#libaries for visulize dataset
+import plotly.express as px
+import plotly.graph_objects as go
+from sklearn import linear_model
+#libary for input 
+import ipywidgets as widgets
+import seaborn as sns
+
+#CSV import
+housing = pd.read_csv("C:\Database\BS_project\Housing.csv")
+housing_rooms = pd.read_csv("C:\Database\BS_project\Housing.csv")
+#drop empty values
+New_Housing = housing.dropna()
+#make dataframe of csv file
+df = pd.DataFrame(data=New_Housing)
+df["ocean_proximity"] = df["ocean_proximity"].astype("category")
+df.info()
+
+#Dataset
+df.head()
+
+#overall data
+df.hist(bins=50, figsize=(20,15))
+
+# Correlation model
+corr = df.corr()
+corr.style.background_gradient(cmap='YlGn')
+
+<h3 align='Left'>Median House value to total rooms
+
+#Ocean proximity to total bedrooms
+Ocean_Value=df.groupby("ocean_proximity")["total_bedrooms"].mean()
+print(Ocean_Value)
+
+# show relation ship between number of rooms to house value
+
+rooms = df.total_rooms.to_list()       # Moved column from a df to a list
+house_value = df.median_house_value.to_list() # Moved column from a df to a list
+
+#find mean of both values 
+average_rooms = np.mean(rooms)
+average_House_Value = np.mean(house_value)
+
+#Calculate B0 and B1
+sum1 = 0
+sum2 = 0
+for i in range(len(rooms)):
+    sum1 = sum1 + ((rooms[i] - average_rooms)*(rooms[i] - average_rooms))
+    sum2 = sum2 + ((house_value[i] - average_House_Value)*(rooms[i] - average_rooms))
+b1 = sum2/sum1
+b0 = average_House_Value - (b1 * average_rooms)
+print (b1)
+print (b0)
+
+#Ocean proximity to total rooms
+Ocean_Value=df.groupby("ocean_proximity")["total_rooms"].mean()
+print(Ocean_Value)
+
+# Ocean proximity to households
+Ocean_Value=df.groupby("ocean_proximity")["households"].mean()
+print(Ocean_Value)
+
+# Ocean proximity to population
+Ocean_Value=df.groupby("ocean_proximity")["population"].mean()
+print(Ocean_Value)
+
+corr, _ = pearsonr(total_rooms, median_house_value)
+print(corr)
+
+#Make the regression list, and plot the line y = 188300  7.0411 x.
+x = np.linspace(1,20000,10000)
+y = b0 + (b1*x)
+
+#Make the regression list between rooms and median value
+x = np.linspace(1,20000,10000)
+y = b0 + (b1*x)
+plt.plot(x,y,'r')
+plt.scatter(rooms, house_value)
+#Make a x and Y min and max for better reading.
+plt.xlim((0,16000))
+plt.ylim((0,499999))
+#name the X and Y as.
+plt.xlabel("rooms")
+plt.ylabel("Median Value")
+
+boxplot = df.boxplot(["total_bedrooms"], by = ["ocean_proximity"],
+                     figsize = (16, 9),
+                     showmeans = True,
+                     notch = True)
+
+boxplot.set_xlabel("bedrooms")
+boxplot.set_ylabel("ocean_proximity")
+
+plt.style.use('seaborn')
+
+data = pd.read_csv('C:\Database\BS_project\Housing.csv')
+data.info() # take a look at what is in the data set 
+print (data)
+
+total_rooms = data['total_rooms']
+median_house_value = data['median_house_value']
+
+
+plt.scatter(total_rooms, median_house_value, edgecolor='black', linewidth=1, alpha=0.75)
+
+plt.title('total rooms to median house value')
+plt.xlabel('total_rooms')
+plt.ylabel('median_house_value')
+
+plt.tight_layout()
+
+plt.show()
+
+total_bedrooms = data['total_bedrooms']
+median_house_value = data['median_house_value']
+
+plt.scatter(total_bedrooms, median_house_value, edgecolor='black', linewidth=1, alpha=0.75)
+
+plt.title('total bedrooms to median house value')
+plt.xlabel('total_bedrooms')
+plt.ylabel('median_income')
+
+plt.tight_layout()
+
+plt.show()
+
+<h3 align='Left'>Housing rooms to median_house_value average
+
+housing_rooms.head()
+
+housing_rooms.shape
+
+rooms_columns = housing_rooms[['median_house_value', 'total_rooms', 'ocean_proximity']]
+rooms_columns.head()
+
+low_value = rooms_columns.groupby(['ocean_proximity', 'total_rooms']).mean()
+low_value.head(10)
+
+low_value = low_value.reset_index()
+low_value.head()
+
+#total entries per ocean proximity
+df['ocean_proximity'].value_counts()
+
+#mean per ocean proximity
+df['ocean_proximity'].value_counts(normalize=True)
+
+ocean_grp = df.groupby(['ocean_proximity'])
+
+ocean_grp.get_group('NEAR BAY')
+
+filt = df['ocean_proximity'] == 'ISLAND'
+df.loc[filt]['total_rooms'].value_counts()
+
+ocean_grp['total_rooms'].median()
+
+ocean_grp['total_rooms'].mean()
+
+#Reflection
+#This assignment has been a deep dive lesson for many students. Some with pre-existing experience in IT and python took this challange with open arms,
+however those with a marketing/financial background, found this assignment quite overwhelming.
+This created a rift where beginners were putting their new-learned theory into practice and others who already excitedly dived into coding.
+Our team was an example of this rift, which led to misunderstanding and miscommunication. 
+I believe however, that every member of this team gave its best to confront this challange in their own way, I certainly have learnt a lot from this 
+experience
